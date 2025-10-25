@@ -71,20 +71,40 @@ def main(args):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
 
-    # Load all samples
-    all_samples = scan_folder(args.data_root)
-    if len(all_samples) == 0:
-        raise ValueError(f"No image files found under {args.data_root}")
+    # # Load all samples
+    # all_samples = scan_folder(args.data_root)
+    # if len(all_samples) == 0:
+    #     raise ValueError(f"No image files found under {args.data_root}")
 
-    random.shuffle(all_samples)
-    n = len(all_samples)
-    n_train = int(n * 0.7)
-    n_val = int(n * 0.15)
-    train_samples = all_samples[:n_train]
-    val_samples = all_samples[n_train:n_train + n_val]
-    test_samples = all_samples[n_train + n_val:]
+    # random.shuffle(all_samples)
+    # n = len(all_samples)
+    # n_train = int(n * 0.7)
+    # n_val = int(n * 0.15)
+    # train_samples = all_samples[:n_train]
+    # val_samples = all_samples[n_train:n_train + n_val]
+    # test_samples = all_samples[n_train + n_val:]
 
-    print(f"Total: {n}, Train: {len(train_samples)}, Val: {len(val_samples)}, Test: {len(test_samples)}")
+    # print(f"Total: {n}, Train: {len(train_samples)}, Val: {len(val_samples)}, Test: {len(test_samples)}")
+    # Load from existing train/test directories
+    train_dir = os.path.join(args.data_root, "train")
+    test_dir  = os.path.join(args.data_root, "test")
+
+    train_samples = scan_folder(train_dir)
+    test_samples  = scan_folder(test_dir)
+
+    if len(train_samples) == 0:
+        raise ValueError(f"No training images found under {train_dir}")
+    if len(test_samples) == 0:
+        raise ValueError(f"No testing images found under {test_dir}")
+
+    # Shuffle and split the training set into train/val
+    random.shuffle(train_samples)
+    n_train = int(len(train_samples) * 0.85)
+    val_samples = train_samples[n_train:]
+    train_samples = train_samples[:n_train]
+
+    print(f"Train: {len(train_samples)}, Val: {len(val_samples)}, Test: {len(test_samples)}")
+
 
     transform_train = transforms.Compose([
         transforms.Resize((224, 224)),
@@ -136,8 +156,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_root', required=True, help='Path to AD/NC folders')
     parser.add_argument('--model_name', default='convnext_tiny')
-    parser.add_argument('--batch_size', type=int, default=32)
-    parser.add_argument('--lr', type=float, default=3e-5)
+    parser.add_argument('--batch_size', type=int, default=512)
+    parser.add_argument('--lr', type=float, default=4.8e-4)
     parser.add_argument('--epochs', type=int, default=10)
     parser.add_argument('--ckpt', default='best_model.pth')
     parser.add_argument('--seed', type=int, default=42)
