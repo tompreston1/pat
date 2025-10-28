@@ -8,4 +8,4 @@ Tasks may include:
 * Image super resolution
 * Disease classification
 * Generative modelling with StyleGAN and Stable Diffusion
-asas
+asassdasd
