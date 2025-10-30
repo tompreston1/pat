@@ -96,9 +96,13 @@ The model follows the **ConvNeXt-Small** design pattern:
 - Implemented in `dataset.py`.  
 - The loader scans the `ADNI/AD_NC/` directory structure:
   ```
-  ADNI/
-    ├── AD/
-    └── NC/
+  ADNI/AD_NC/
+    ├── train/
+    │ ├── AD/ # Alzheimer's MRI scans
+    │ └── NC/ # Normal control MRI scans
+    ├── test/
+    │ ├── AD/
+    │ └── NC/
   ```
 - Each `.nii` or `.nii.gz` MRI slice is:
   - Loaded via **Nibabel**.
